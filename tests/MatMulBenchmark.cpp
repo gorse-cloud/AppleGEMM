@@ -1,10 +1,11 @@
+#include "Eigen/Dense"
 #include "TestUtils.h"
 #include "apple_gemm.h"
 #include "benchmark/benchmark.h"
 
 constexpr uint64_t m = 48, n = 32, k = 64;
 
-static void BenchmarkMatMul(benchmark::State& state) {
+static void BenchmarkMatMul(benchmark::State &state) {
   const auto a = random_matrix(m, k);
   const auto b = random_matrix(k, n);
   auto c = random_matrix(m, n);
@@ -16,7 +17,7 @@ static void BenchmarkMatMul(benchmark::State& state) {
 
 BENCHMARK(BenchmarkMatMul);
 
-static void BenchmarkMatMulApple(benchmark::State& state) {
+static void BenchmarkMatMulApple(benchmark::State &state) {
   const auto a = random_matrix(m, k);
   const auto b = random_matrix(k, n);
   auto c = random_matrix(m, n);
@@ -27,5 +28,17 @@ static void BenchmarkMatMulApple(benchmark::State& state) {
 }
 
 BENCHMARK(BenchmarkMatMulApple);
+
+static void BenchmarkMatMulXTensor(benchmark::State &state) {
+  auto a = random_matrix_eigen(m, k);
+  auto b = random_matrix_eigen(k, n);
+  Eigen::MatrixXf c(m, n);
+  for (auto _ : state) {
+    c = a * b;
+    benchmark::DoNotOptimize(c);
+  }
+}
+
+BENCHMARK(BenchmarkMatMulXTensor);
 
 BENCHMARK_MAIN();
