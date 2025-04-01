@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 
 TEST(MatMulTest, matmul) {
-  constexpr uint64_t m = 48, n = 32, k = 64;
+  constexpr uint64_t m = 63, n = 47, k = 79;
   const auto a = random_matrix(m, k);
   const auto b = random_matrix(k, n);
   auto c = random_matrix(m, n);
