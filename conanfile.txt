@@ -1,7 +1,9 @@
 [requires]
+armadillo/12.6.4
 benchmark/1.9.1
 eigen/3.4.0
 gtest/1.15.0
+openblas/0.3.27
 [generators]
 CMakeDeps
 CMakeToolchain

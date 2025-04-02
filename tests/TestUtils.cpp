@@ -26,6 +26,16 @@ Eigen::MatrixXf random_matrix_eigen(uint64_t m, uint64_t n) {
   return v;
 }
 
+arma::mat random_matrix_arma(uint64_t m, uint64_t n) {
+  arma::mat v(m, n);
+  for (size_t i = 0; i < m; i++) {
+    for (size_t j = 0; j < n; j++) {
+      v(i, j) = dist(gen);
+    }
+  }
+  return v;
+}
+
 void matmul(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
             uint64_t k) {
   for (uint64_t i = 0; i < m; i++) {
