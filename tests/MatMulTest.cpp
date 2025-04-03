@@ -14,7 +14,7 @@ TEST(MatMulTest, matmul) {
   GTEST_ASSERT_EQ(c, d);
 }
 
-TEST(MatMulTest, OpenBLAS) {
+TEST(MatMulTest, blas) {
   constexpr uint64_t m = 63, n = 47, k = 79;
   const auto a = random_matrix(m, k);
   const auto b = random_matrix(k, n);

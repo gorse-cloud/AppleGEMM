@@ -4,9 +4,9 @@
 #include "benchmark/benchmark.h"
 #include "cblas.h"
 
-constexpr uint64_t m = 48, n = 32, k = 64;
+constexpr uint64_t m = 16, n = 16, k = 16;
 
-static void BenchmarkMatMul(benchmark::State &state) {
+static void BenchmarkMatMulNaive(benchmark::State &state) {
   const auto a = random_matrix(m, k);
   const auto b = random_matrix(k, n);
   auto c = random_matrix(m, n);
@@ -16,19 +16,7 @@ static void BenchmarkMatMul(benchmark::State &state) {
   }
 }
 
-BENCHMARK(BenchmarkMatMul);
-
-static void BenchmarkMatMulApple(benchmark::State &state) {
-  const auto a = random_matrix(m, k);
-  const auto b = random_matrix(k, n);
-  auto c = random_matrix(m, n);
-  for (auto _ : state) {
-    apple_matmul(a.data(), b.data(), c.data(), m, n, k);
-    benchmark::DoNotOptimize(c);
-  }
-}
-
-BENCHMARK(BenchmarkMatMulApple);
+BENCHMARK(BenchmarkMatMulNaive);
 
 static void BenchmarkMatMulEigen(benchmark::State &state) {
   auto a = random_matrix_eigen(m, k);
@@ -66,5 +54,17 @@ static void BenchmarkMatMulOpenBLAS(benchmark::State &state) {
 }
 
 BENCHMARK(BenchmarkMatMulOpenBLAS);
+
+static void BenchmarkMatMulAppleGEMM(benchmark::State &state) {
+  const auto a = random_matrix(m, k);
+  const auto b = random_matrix(k, n);
+  auto c = random_matrix(m, n);
+  for (auto _ : state) {
+    apple_matmul(a.data(), b.data(), c.data(), m, n, k);
+    benchmark::DoNotOptimize(c);
+  }
+}
+
+BENCHMARK(BenchmarkMatMulAppleGEMM);
 
 BENCHMARK_MAIN();

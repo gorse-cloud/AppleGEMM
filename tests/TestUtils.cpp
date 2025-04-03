@@ -2,6 +2,25 @@
 
 #include <random>
 
+#include <arm_neon.h>
+#include <stdint.h>
+
+void vmul_const_add_to(float *a, float *b, float *c, long n) {
+  int epoch = n / 4;
+  int remain = n % 4;
+  for (int i = 0; i < epoch; i++) {
+    float32x4_t v1 = vld1q_f32(a);
+    float32x4_t v3 = vld1q_f32(c);
+    float32x4_t v = vmlaq_n_f32(v3, v1, *b);
+    vst1q_f32(c, v);
+    a += 4;
+    c += 4;
+  }
+  for (int i = 0; i < remain; i++) {
+    c[i] += a[i] * b[0];
+  }
+}
+
 namespace {
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -41,7 +60,9 @@ void matmul(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
   for (uint64_t i = 0; i < m; i++) {
     for (uint64_t j = 0; j < n; j++) {
       c[i * n + j] = 0;
-      for (uint64_t l = 0; l < k; l++) {
+    }
+    for (uint64_t l = 0; l < k; l++) {
+      for (uint64_t j = 0; j < n; j++) {
         c[i * n + j] += a[i * k + l] * b[l * n + j];
       }
     }
