@@ -51,12 +51,25 @@ inline void apple_mm(const float *a, const float *b, float *c, uint64_t m,
       }
     }
   } else if (!transA && transB) {
-    for (uint64_t i = 0; i < m; i++) {
-      for (uint64_t j = 0; j < n; j++) {
-        c[i * n + j] = 0;
-        for (uint64_t l = 0; l < k; l++) {
-          c[i * n + j] += a[i * k + l] * b[j * k + l];
+    for (uint64_t ii = 0; ii < m; ii += 16) {
+      for (uint64_t jj = 0; jj < n; jj += 16) {
+        amx_set();
+        for (uint64_t kk = 0; kk < k; kk += 16) {
+          for (uint64_t l = 0; l < 16; l++) {
+            amx_ldz_f32(l * 4 + 1, a + (ii + l) * k + kk);
+            amx_ldz_f32(l * 4 + 2, b + (jj + l) * k + kk);
+          }
+          for (uint64_t l = 0; l < 16; l++) {
+            amx_extrv_f32(l * 4 + 2);
+            amx_extrx();
+            amx_extrv_f32(l * 4 + 1);
+            amx_fma_f32();
+          }
         }
+        for (uint64_t l = 0; l < 16; l++) {
+          amx_stz_f32(l * 4, c + (ii + l) * n + jj);
+        }
+        amx_clr();
       }
     }
   } else if (transA && !transB) {
