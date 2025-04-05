@@ -4,7 +4,7 @@
 #include "benchmark/benchmark.h"
 #include "cblas.h"
 
-constexpr uint64_t m = 16, n = 16, k = 16;
+constexpr uint64_t m = 64, n = 64, k = 64;
 
 class MMBenchmark : public benchmark::Fixture {};
 
