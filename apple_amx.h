@@ -39,6 +39,10 @@ inline void amx_stz_f32(uint64_t index, float *z) {
 
 inline void amx_fma_f32() { AMX_FMA32(0); }
 
+inline void amx_extrx() {
+  AMX_EXTRX(amx_operand_field(27, 1, 1) | amx_operand_field(26, 1, 0));
+}
+
 inline void amx_extrv_f32(uint64_t index) {
   AMX_EXTRY(amx_operand_field(28, 2, 1) | amx_operand_field(20, 6, index));
 }

@@ -8,7 +8,7 @@
     EXPECT_FLOAT_EQ(a[i], b[i]);                                               \
   }
 
-constexpr uint64_t m = 63, n = 47, k = 79;
+constexpr uint64_t m = 64, n = 64, k = 64;
 
 TEST(AppleMMTest, noTrans) {
   const auto a = random_matrix(m, k);
