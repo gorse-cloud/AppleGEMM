@@ -3,9 +3,12 @@
 #include "cblas.h"
 #include "gtest/gtest.h"
 
-#define EXPECT_FLOATS_EQ(a, b, n)                                              \
-  for (size_t i = 0; i < n; i++) {                                             \
-    EXPECT_FLOAT_EQ(a[i], b[i]);                                               \
+#define EXPECT_FLOATS_EQ(a, b, m, n)                                           \
+  for (size_t i = 0; i < m; i++) {                                             \
+    for (size_t j = 0; j < n; j++) {                                           \
+      EXPECT_FLOAT_EQ(a[i * n + j], b[i * n + j])                              \
+          << "at (" << i << "," << j << ")";                                   \
+    }                                                                          \
   }
 
 constexpr uint64_t m = 64, n = 64, k = 64;
@@ -18,7 +21,7 @@ TEST(AppleMMTest, noTrans) {
   cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1.0f,
               a.data(), k, b.data(), n, 0.0f, c.data(), n);
   apple_mm(a.data(), b.data(), d.data(), m, n, k, false, false);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(AppleMMTest, transposeA) {
@@ -29,7 +32,7 @@ TEST(AppleMMTest, transposeA) {
   cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k, 1.0f, a.data(),
               m, b.data(), n, 0.0f, c.data(), n);
   apple_mm(a.data(), b.data(), d.data(), m, n, k, true, false);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(AppleMMTest, transposeB) {
@@ -40,7 +43,7 @@ TEST(AppleMMTest, transposeB) {
   cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, m, n, k, 1.0f, a.data(),
               k, b.data(), k, 0.0f, c.data(), n);
   apple_mm(a.data(), b.data(), d.data(), m, n, k, false, true);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(AppleMMTest, transposeAB) {
@@ -51,7 +54,7 @@ TEST(AppleMMTest, transposeAB) {
   cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, m, n, k, 1.0f, a.data(), m,
               b.data(), k, 0.0f, c.data(), n);
   apple_mm(a.data(), b.data(), d.data(), m, n, k, true, true);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(MMTest, noTrans) {
@@ -62,7 +65,7 @@ TEST(MMTest, noTrans) {
   cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1.0f,
               a.data(), k, b.data(), n, 0.0f, c.data(), n);
   mm(a.data(), b.data(), d.data(), m, n, k, false, false);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(MMTest, transposeA) {
@@ -73,7 +76,7 @@ TEST(MMTest, transposeA) {
   cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k, 1.0f, a.data(),
               m, b.data(), n, 0.0f, c.data(), n);
   mm(a.data(), b.data(), d.data(), m, n, k, true, false);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(MMTest, transposeB) {
@@ -84,7 +87,7 @@ TEST(MMTest, transposeB) {
   cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, m, n, k, 1.0f, a.data(),
               k, b.data(), k, 0.0f, c.data(), n);
   mm(a.data(), b.data(), d.data(), m, n, k, false, true);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
 
 TEST(MMTest, transposeAB) {
@@ -95,5 +98,5 @@ TEST(MMTest, transposeAB) {
   cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, m, n, k, 1.0f, a.data(), m,
               b.data(), k, 0.0f, c.data(), n);
   mm(a.data(), b.data(), d.data(), m, n, k, true, true);
-  EXPECT_FLOATS_EQ(c, d, m * n);
+  EXPECT_FLOATS_EQ(c, d, m, n);
 }
