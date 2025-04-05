@@ -11,5 +11,5 @@ Eigen::MatrixXf random_matrix_eigen(uint64_t m, uint64_t n);
 
 arma::mat random_matrix_arma(uint64_t m, uint64_t n);
 
-void matmul(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
-            uint64_t k);
+void mm(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
+            uint64_t k, bool transA, bool transB);

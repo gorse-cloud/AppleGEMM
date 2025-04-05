@@ -55,15 +55,46 @@ arma::mat random_matrix_arma(uint64_t m, uint64_t n) {
   return v;
 }
 
-void matmul(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
-            uint64_t k) {
+void mm(const float *a, const float *b, float *c, uint64_t m, uint64_t n,
+            uint64_t k, bool transA, bool transB) {
   for (uint64_t i = 0; i < m; i++) {
     for (uint64_t j = 0; j < n; j++) {
       c[i * n + j] = 0;
     }
-    for (uint64_t l = 0; l < k; l++) {
+  }
+  if (!transA && !transB) {
+    for (uint64_t i = 0; i < m; i++) {
+      for (uint64_t l = 0; l < k; l++) {
+        for (uint64_t j = 0; j < n; j++) {
+          c[i * n + j] += a[i * k + l] * b[l * n + j];
+        }
+      }
+    }
+  } else if (!transA && transB) {
+    for (uint64_t i = 0; i < m; i++) {
       for (uint64_t j = 0; j < n; j++) {
-        c[i * n + j] += a[i * k + l] * b[l * n + j];
+        c[i * n + j] = 0;
+        for (uint64_t l = 0; l < k; l++) {
+          c[i * n + j] += a[i * k + l] * b[j * k + l];
+        }
+      }
+    }
+  } else if (transA && !transB) {
+    for (uint64_t i = 0; i < m; i++) {
+      for (uint64_t j = 0; j < n; j++) {
+        c[i * n + j] = 0;
+        for (uint64_t l = 0; l < k; l++) {
+          c[i * n + j] += a[l * m + i] * b[l * n + j];
+        }
+      }
+    }
+  } else {
+    for (uint64_t i = 0; i < m; i++) {
+      for (uint64_t j = 0; j < n; j++) {
+        c[i * n + j] = 0;
+        for (uint64_t l = 0; l < k; l++) {
+          c[i * n + j] += a[l * m + i] * b[j * k + l];
+        }
       }
     }
   }
